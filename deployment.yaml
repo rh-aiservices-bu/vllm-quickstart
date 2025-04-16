@@ -1,0 +1,61 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: vllm-server
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: vllm
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: vllm
+    spec:
+      initContainers:
+      - name: hf-downloader
+        image: quay.io/vllm/vllm:0.8.3.0rc0
+        command:
+        - /bin/sh
+        args:
+        - -c
+        - /opt/vllm/bin/huggingface-cli download ibm-granite/granite-3.3-2b-instruct
+        env:
+        - name: HF_HOME
+          value: /tmp/model-cache
+        - name: HF_HUB_OFFLINE
+          value: '0'
+        envFrom:
+        - secretRef:
+            name: hf-token-secret
+        volumeMounts:
+          - name: model-storage
+            mountPath: /tmp/model-cache
+      containers:
+      - name: vllm
+        image: quay.io/vllm/vllm:0.8.3.0rc0
+        command:
+        - /bin/sh
+        args:
+        - -c
+        - vllm serve ibm-granite/granite-3.3-2b-instruct
+        env:
+        - name: HF_HOME
+          value: /tmp/model-cache
+        resources:
+          limits:
+            nvidia.com/gpu: 1
+        ports:
+          - containerPort: 8000
+        volumeMounts:
+          - name: model-storage
+            mountPath: /tmp/model-cache
+      tolerations:
+      - key: nvidia.com/gpu
+        effect: NoSchedule
+        operator: Exists
+      volumes:
+      - name: model-storage
+        persistentVolumeClaim:
+          claimName: vllm-models
