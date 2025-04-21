@@ -1,0 +1,129 @@
+# Default values for vllm.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+replicaCount: 1
+
+image:
+  registry: quay.io
+  repository: vllm/vllm
+  pullPolicy: IfNotPresent
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: ""
+
+configuration:
+  env: {}
+  modelReference: ibm-granite/granite-3.3-2b-instruct  # not necessary if you're using an image
+  extraArgs: []
+  shm:
+    size: 2Gi
+  hfModelDownload:
+    enabled: true
+    huggingfaceToken: ""
+  cache:
+    type: emptyDir # type can be one of pvc or emptyDir
+    size: 20Gi
+    emptyDir: {}
+    pvc:
+      accessModes:
+        - ReadWriteOnce
+  modelStorage:
+    type: pvc  # type can be one of pvc, image, or emptyDir
+    size: 20Gi
+    mountPath: /tmp/hf_home
+    emptyDir: {}
+    pvc:
+      accessModes:
+        - ReadWriteOnce
+    ## Note that this can be an OCI image or an artifact, but it cannot be
+    # a Model Car that has the model files anywhere other than the image root
+    image:
+      reference: ""
+      pullPolicy: IfNotPresent
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+deploymentStrategy:
+  type: RollingUpdate
+
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: true
+  # Automatically mount a ServiceAccount's API credentials?
+  automount: true
+  # Annotations to add to the service account
+  annotations: {}
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: ""
+
+podAnnotations:
+  prometheus.io/path: /metrics
+  prometheus.io/port: "8000"
+
+podLabels: {}
+
+podSecurityContext: {}
+  # fsGroup: 2000
+
+securityContext:
+  capabilities:
+    drop:
+    - ALL
+  readOnlyRootFilesystem: true
+  runAsNonRoot: true
+
+service:
+  type: ClusterIP
+  port: 8000
+
+route:
+  enabled: false
+  annotations: {}
+  tls:
+    insecureEdgeTerminationPolicy: Redirect
+    termination: edge
+  subdomain: ""
+
+resources:
+  limits:
+    cpu: 4
+    memory: 16Gi
+    nvidia.com/gpu: 1
+  requests:
+    cpu: 2
+    memory: 8Gi
+    nvidia.com/gpu: 1
+
+livenessProbe:
+  httpGet:
+    path: /health
+    port: http
+  failureThreshold: 2
+  periodSeconds: 60
+  timeoutSeconds: 3
+readinessProbe:
+  httpGet:
+    path: /v1/models
+    port: http
+  failureThreshold: 3
+  periodSeconds: 30
+  timeoutSeconds: 3
+startupProbe:
+  httpGet:
+    path: /health
+    port: http
+  failureThreshold: 180
+  periodSeconds: 10
+  timeoutSeconds: 3
+
+nodeSelector: {}
+
+tolerations:
+  - key: nvidia.com/gpu
+    effect: NoSchedule
+    operator: Exists
+
+affinity: {}
