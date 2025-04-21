@@ -101,7 +101,7 @@ spec:
         - name: shm
           emptyDir:
             medium: Memory
-            size: {{ .Values.configuration.shm.size }}
+            sizeLimit: {{ .Values.configuration.shm.size }}
         - name: tmp
           emptyDir: {}
         - name: cache
