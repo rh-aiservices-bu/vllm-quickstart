@@ -24,11 +24,15 @@ spec:
     {{- else }}
     targetPort: http
     {{- end }}
-  {{- if .Values.route.tls.enabled }}
+  {{- if or .Values.route.tls.enabled .Values.route.oauth.enabled }}
   tls:
     insecureEdgeTerminationPolicy: {{ .Values.route.tls.insecureEdgeTerminationPolicy }}
     {{- if .Values.route.oauth.enabled }}
+    {{- if .Values.route.tls.enabled }}
     termination: reencrypt
+    {{- else }}
+    termination: passthrough
+    {{- end }}
     {{- else }}
     termination: edge
     {{- end }}
