@@ -19,7 +19,7 @@ configuration:
     size: 2Gi
   hfModelDownload:
     enabled: true
-    huggingfaceToken: ""
+    huggingfaceToken: null
   cache:
     type: emptyDir # type can be one of pvc or emptyDir
     size: 20Gi
@@ -83,8 +83,8 @@ route:
   enabled: false
   annotations: {}
   tls:
+    enabled: true
     insecureEdgeTerminationPolicy: Redirect
-    termination: edge
   subdomain: ""
 
 resources:
