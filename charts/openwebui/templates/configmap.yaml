@@ -1,0 +1,25 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "openwebui.fullname" . }}
+  labels:
+    {{- include "openwebui.labels" . | nindent 4 }}
+data:
+  ENABLE_OLLAMA_API: "false"
+  ENABLE_OPENAI_API: "true"
+  OPENAI_API_BASE_URL: {{ quote .Values.configuration.vllmEndpoint }}
+  {{- range $k, $v := .Values.configuration.env }}
+  {{- if and (ne $k "ENABLE_OLLAMA_API") (and (ne $k "ENABLE_OPENAI_API") (ne $k "OPENAPI_BASE_URL")) }}
+  {{ $k }}: {{ quote $v }}
+  {{- end }}
+  {{- end }}
+{{- if .Values.route.oauth.enabled }}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "openwebui.fullname" . }}-ocp-injected-certs
+  labels:
+    config.openshift.io/inject-trusted-cabundle: "true"
+{{- end }}

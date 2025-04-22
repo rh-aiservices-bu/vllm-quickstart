@@ -1,0 +1,22 @@
+{{- if eq .Values.configuration.data.type "pvc" }}
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ include "openwebui.fullname" . }}-data
+  {{- with .Values.configuration.data.pvc.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  {{- with .Values.configuration.data.pvc.storageClassName }}
+  storageClassName: {{ . }}
+  {{- end }}
+  {{- with .Values.configuration.data.pvc.accessModes }}
+  accessModes:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  resources:
+    requests:
+      storage: {{ .Values.configuration.data.size }}
+{{- end }}
