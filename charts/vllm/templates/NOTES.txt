@@ -1,8 +1,7 @@
 1. Get the OpenAI API base URL by running these commands:
 {{- if .Values.route.enabled }}
   route_hostname=$(kubectl get --namespace {{ .Release.Namespace }} route {{ include "vllm.fullname" . }} -o jsonpath='{.status.ingress[0].host}')
-  {{- $tls := has (default "" (index .Values.route.tls "termination")) (tuple "edge" "reencrypt" "passthrough") }}
-  {{- $proto := ternary "https" "http" $tls }}
+  {{- $proto := ternary "https" "http" .Values.route.tls.enabled }}
   {{- printf "" | nindent 2 }}echo {{ $proto }}://${route_hostname}/v1
 {{- else if contains "NodePort" .Values.service.type }}
   export NODE_PORT=$(kubectl get --namespace {{ .Release.Namespace }} -o jsonpath="{.spec.ports[0].nodePort}" services {{ include "vllm.fullname" . }})
