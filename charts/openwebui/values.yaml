@@ -18,6 +18,7 @@ configuration:
   extraArgs: []
   vllmEndpoint: http://vllm.example.svc:8000/v1
   vllmModel: ibm-granite/granite-3.3-2b-instruct
+  vllmToken: ""
   data:
     type: pvc # type can be one of pvc or emptyDir
     size: 5Gi
