@@ -99,8 +99,8 @@ startupProbe:
   httpGet:
     path: /health
     port: http
-  initialDelaySeconds: 30
-  failureThreshold: 20
+  initialDelaySeconds: 5
+  failureThreshold: 30
   periodSeconds: 5
   timeoutSeconds: 3
 
