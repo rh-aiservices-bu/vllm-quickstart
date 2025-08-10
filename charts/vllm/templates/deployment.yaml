@@ -120,7 +120,7 @@ spec:
             - name: modelcar-mount
               mountPath: /app
         {{- else }} {{/* this is the model-storage mount for the main container when not using an image */}}
-              mountPath: {{ .Values.configuration.modelStorage.rootDir }}/.cache
+              mountPath: {{ .Values.configuration.modelStorage.rootDir }}
         {{- end }}
       volumes:
         - name: model-storage
