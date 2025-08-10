@@ -43,6 +43,23 @@ app.kubernetes.io/managed-by: {{ .Release.Service }}
 {{- end }}
 
 {{/*
+Pod annotations
+*/}}
+{{- define "vllm.podAnnotations" -}}
+{{- if .Values.monitoring.enabled -}}
+prometheus.io/path: /metrics
+prometheus.io/port: "8000"
+{{- range $k, $v := .Values.podAnnotations }}
+{{- if and (ne "prometheus.io/path" $k) (ne "promethius.io/port" $k) }}
+{{ $k }}: {{ quote $v }}
+{{- end }}
+{{- end }}
+{{- else -}}
+{{ toYaml .Values.podAnnotations }}
+{{- end }}
+{{- end }}
+
+{{/*
 Selector labels
 */}}
 {{- define "vllm.selectorLabels" -}}

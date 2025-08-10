@@ -14,9 +14,9 @@ spec:
       {{- include "vllm.selectorLabels" . | nindent 6 }}
   template:
     metadata:
-      {{- with .Values.podAnnotations }}
+      {{- if or .Values.podAnnotations .Values.monitoring.enabled }}
       annotations:
-        {{- toYaml . | nindent 8 }}
+        {{- include "vllm.podAnnotations" . | nindent 8 }}
       {{- end }}
       labels:
         {{- include "vllm.labels" . | nindent 8 }}

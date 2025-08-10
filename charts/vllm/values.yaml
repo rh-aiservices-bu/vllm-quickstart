@@ -48,9 +48,10 @@ serviceAccount:
   # If not set and create is true, a name is generated using the fullname template
   name: ""
 
-podAnnotations:
-  prometheus.io/path: /metrics
-  prometheus.io/port: "8000"
+monitoring:
+  enabled: true
+
+podAnnotations: {}
 
 podLabels: {}
 
