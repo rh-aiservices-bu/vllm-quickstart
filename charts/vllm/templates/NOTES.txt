@@ -18,9 +18,7 @@
 {{- end }}
 
 {{- range $k, $v := .Values.configuration.env }}
-{{- if eq $k "HF_HOME" }}
-Warning: You provided an HF_HOME environment variable, which is ignored as it's controlled via the .configuration.modelStorage.mountPath value.
-{{- else if eq $k "HF_HUB_OFFLINE" }}
+{{- if eq $k "HF_HUB_OFFLINE" }}
 Warning: You provided an HF_HUB_OFFLINE environment variable, which is ignored as it's controlled via the .configuration.hfModelDownload.enabled value.
 {{- end }}
 {{- end }}

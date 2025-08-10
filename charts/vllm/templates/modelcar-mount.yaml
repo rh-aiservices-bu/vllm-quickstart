@@ -1,0 +1,11 @@
+{{- if and (eq .Values.configuration.modelStorage.type "image") (eq .Values.configuration.modelStorage.image.type "modelCar") }}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "vllm.fullname" . }}-modelcar-mount
+  labels:
+    {{- include "vllm.labels" . | nindent 4 }}
+data:
+{{- (.Files.Glob "files/modelcar-mount/*.sh").AsConfig | nindent 2 }}
+{{- end }}

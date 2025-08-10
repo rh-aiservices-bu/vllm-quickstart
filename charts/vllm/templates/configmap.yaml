@@ -6,14 +6,13 @@ metadata:
   labels:
     {{- include "vllm.labels" . | nindent 4 }}
 data:
-  HF_HOME: {{ quote .Values.configuration.modelStorage.mountPath }}
   {{- if .Values.configuration.hfModelDownload.enabled }}
   HF_HUB_OFFLINE: "0"
   {{- else }}
   HF_HUB_OFFLINE: "1"
   {{- end }}
   {{- range $k, $v := .Values.configuration.env }}
-  {{- if and (ne $k "HF_HOME") (ne $k "HF_HUB_OFFLINE") }}
+  {{- if ne $k "HF_HUB_OFFLINE" }}
   {{ $k }}: {{ quote $v }}
   {{- end }}
   {{- end }}
