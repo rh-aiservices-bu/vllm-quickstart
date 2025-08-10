@@ -50,7 +50,6 @@ serviceAccount:
 
 monitoring:
   enabled: true
-  dashboardEnabled: true
 
 podAnnotations: {}
 
