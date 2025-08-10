@@ -1,0 +1,14 @@
+{{- if .Values.monitoring.dashboardEnabled }}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "vllm.fullname" . }}-dashboard
+  namespace: openshift-config-managed
+  labels:
+    {{- include "vllm.labels" . | nindent 4 }}
+    console.openshift.io/dashboard: "true"
+    console.openshift.io/odc-dashboard: "true"
+data:
+{{- (.Files.Glob "files/dashboard/*.json").AsConfig | nindent 2 }}
+{{- end }}
