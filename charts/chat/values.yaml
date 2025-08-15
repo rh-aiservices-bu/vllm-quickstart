@@ -1,0 +1,9 @@
+---
+vllm:
+  enabled: true
+
+openwebui:
+  enabled: true
+  vllmPort: 8000
+  configuration:
+    vllmEndpoint: 'http://{{ include "vllm.fullname" . }}.{{ .Release.Namespace }}.svc:{{ default .Values.vllmPort "8000" }}/v1'

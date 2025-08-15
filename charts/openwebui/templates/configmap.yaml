@@ -8,7 +8,7 @@ metadata:
 data:
   ENABLE_OLLAMA_API: "false"
   ENABLE_OPENAI_API: "true"
-  OPENAI_API_BASE_URL: {{ quote .Values.configuration.vllmEndpoint }}
+  OPENAI_API_BASE_URL: {{ tpl .Values.configuration.vllmEndpoint . | quote }}
   {{- range $k, $v := .Values.configuration.env }}
   {{- if and (ne $k "OPENAI_API_KEY") (and (ne $k "ENABLE_OLLAMA_API") (and (ne $k "ENABLE_OPENAI_API") (ne $k "OPENAPI_BASE_URL"))) }}
   {{ $k }}: {{ quote $v }}
